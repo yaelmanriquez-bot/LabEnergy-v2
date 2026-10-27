@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab ENERGY — Laboratorio digital energético al alcance de todos</title>
+<!-- Conexión a Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Importación de fuentes: Orbitron (Títulos), Space Mono (Datos) y Exo 2 (Texto de lectura) -->
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body><div class="w">
+<!-- Degradados de brillo (amarillo) y calor (rojo) que usan las ilustraciones -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><radialGradient id="gw"><stop offset="0" stop-color="#ffd23f" stop-opacity=".9"/><stop offset="1" stop-color="#ffd23f" stop-opacity="0"/></radialGradient><radialGradient id="gh"><stop offset="0" stop-color="#ef4444" stop-opacity=".65"/><stop offset="1" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs></svg>
+
+<!-- ENCABEZADO: título del laboratorio y marca Lab ENERGY (arriba a la derecha) -->
+<header><div><h1>Laboratorio digital de eficiencia en baja tensión</h1>
+<p>G09 — Proyecto de innovación tecnológica · Energía y eficiencia</p>
+<span class="tag">● Simulación digital reproducible · semilla <span id="seedTag" class="m"></span></span></div>
+<div class="brand"><div><div class="nm">Lab <b>ENERGY</b></div><div class="sl">Laboratorio digital energético al alcance de todos</div></div>
+<!-- LOGO propio: un matraz de laboratorio con una onda de voltaje en su interior -->
+<svg id="logo" width="58" height="58" viewBox="0 0 56 56" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Logo Lab ENERGY: matraz con onda de voltaje"><path d="M20 6H36M23 6V19L10 43Q8 49 15 50H41Q48 49 46 43L33 19V6"/><path d="M15 38q3.25-5 6.5 0t6.5 0t6.5 0t6.5 0" stroke="#9ff3ee"/><circle cx="25" cy="29" r="1.8" fill="#fff" stroke="none"/><circle cx="31" cy="24" r="1.3" fill="#fff" stroke="none"/></svg></div></header>
+<!-- MENÚ DE PESTAÑAS: los botones se crean desde script.js -->
+<nav id="nav"></nav>
+
+<!-- 1. ENSAYO -->
+<section class="tab on" id="t-lab"><div class="g">
+<!-- Panel izquierdo: parámetros del ensayo (carga, voltaje, semilla, ruido) y botones -->
+<div class="c"><h2>Parámetros del ensayo</h2>
+<label>Carga bajo ensayo</label><select id="load" onchange="refresh()"></select>
+<!-- Ilustración de la carga elegida: brilla, se calienta o gira según el ensayo -->
+<div class="illbox"><div id="ill"><svg class="ill" data-k="inc" viewBox="0 0 200 120" role="img" aria-label="Lámpara incandescente">
+<circle cx="100" cy="46" r="32" fill="#f4fbfc" stroke="#9fb3c8" stroke-width="2.5"/>
+<path d="M86 80V58M114 80V58" stroke="#8d94b3" stroke-width="2"/>
+<path d="M86 58l7-10 7 10 7-10 7 10" fill="none" stroke="#6d3fc0" stroke-width="2.5" stroke-linejoin="round"/>
+<g class="glow"><circle cx="100" cy="46" r="54" fill="url(#gw)"/><path d="M86 58l7-10 7 10 7-10 7 10" fill="none" stroke="#ff9f1c" stroke-width="3.5" stroke-linejoin="round"/></g>
+<rect x="82" y="76" width="36" height="12" rx="3" fill="#aab0c6"/>
+<path d="M82 94h36M84 100h32M86 106h28" stroke="#7b82a6" stroke-width="4" stroke-linecap="round"/><path d="M94 111h12l-3 6h-6z" fill="#3a3f5c"/></svg>
+<svg class="ill" data-k="led" viewBox="0 0 200 120" role="img" aria-label="Módulo LED de 12 voltios">
+<path d="M8 62h20" stroke="#d13438" stroke-width="3" stroke-linecap="round"/><path d="M172 62h20" stroke="#222" stroke-width="3" stroke-linecap="round"/>
+<rect x="28" y="44" width="144" height="36" rx="5" fill="#f2f4f8" stroke="#aab0c6" stroke-width="2"/>
+<g fill="#fff3a8" stroke="#c9a400" stroke-width="1.5"><rect x="48" y="52" width="28" height="20" rx="3"/><rect x="86" y="52" width="28" height="20" rx="3"/><rect x="124" y="52" width="28" height="20" rx="3"/></g>
+<rect x="157" y="56" width="11" height="12" rx="1.5" fill="#333"/>
+<g class="glow"><circle cx="62" cy="62" r="38" fill="url(#gw)"/><circle cx="100" cy="62" r="38" fill="url(#gw)"/><circle cx="138" cy="62" r="38" fill="url(#gw)"/></g>
+<text x="36" y="40" font-size="11" fill="#d13438">+</text><text x="160" y="40" font-size="11" fill="#333">−</text><text x="100" y="102" text-anchor="middle" font-size="11" fill="#7b82a6">3 LED en serie + resistencia</text></svg>
+<svg class="ill" data-k="res" viewBox="0 0 200 120" role="img" aria-label="Resistencia de 10 ohmios">
+<path d="M20 60H56M144 60H180" stroke="#9aa3b8" stroke-width="4" stroke-linecap="round"/>
+<rect x="52" y="42" width="96" height="36" rx="18" fill="#e7c98f" stroke="#b8975a" stroke-width="2"/>
+<rect x="72" y="42" width="8" height="36" fill="#7b3f00"/><rect x="88" y="42" width="8" height="36" fill="#111"/><rect x="104" y="42" width="8" height="36" fill="#111"/><rect x="128" y="42" width="8" height="36" fill="#d4af37"/>
+<g class="glow"><ellipse cx="100" cy="60" rx="66" ry="38" fill="url(#gh)"/></g>
+<text x="100" y="104" text-anchor="middle" font-size="11" fill="#7b82a6">10 Ω · café-negro-negro-dorado</text></svg>
+<svg class="ill" data-k="mot" viewBox="0 0 200 120" role="img" aria-label="Motor DC pequeño">
+<path d="M10 48h30M10 72h30" stroke="#9aa3b8" stroke-width="3" stroke-linecap="round"/>
+<rect x="40" y="34" width="86" height="52" rx="10" fill="#8d94b3" stroke="#5c6486" stroke-width="2"/><rect x="40" y="34" width="14" height="52" rx="6" fill="#6b7396"/>
+<text x="88" y="68" text-anchor="middle" font-size="22" font-weight="700" fill="#fff">M</text>
+<path d="M126 60h46" stroke="#c3c8d8" stroke-width="6" stroke-linecap="round"/>
+<g class="fan"><path d="M172 38V82M153 49L191 71M153 71L191 49" stroke="#0e9aa7" stroke-width="5" stroke-linecap="round"/></g></svg>
+<svg class="ill" data-k="off" viewBox="0 0 200 120" role="img" aria-label="Interruptor abierto">
+<path d="M10 80H60M140 80H190" stroke="#9aa3b8" stroke-width="4" stroke-linecap="round"/>
+<circle cx="60" cy="80" r="6" fill="#5b32b0"/><circle cx="140" cy="80" r="6" fill="#5b32b0"/>
+<path d="M60 80L124 40" stroke="#0e9aa7" stroke-width="5" stroke-linecap="round"/>
+<text x="100" y="108" text-anchor="middle" font-size="11" fill="#7b82a6">abierto: sin camino para la corriente</text></svg></div><div id="illCap" class="note" style="margin-top:4px"></div></div>
+<label>Tensión de la fuente DC: <b id="vt" class="am m">12.0 V</b></label><input type="range" id="volt" min="0" max="15" step="0.1" value="12" oninput="refresh()">
+<label>Corriente por la carga: <b id="at" class="am m">-- mA</b></label><input type="range" id="amp" min="0" max="1000" step="1" value="0" oninput="setAmp()">
+<p class="note">Mueve el voltaje <i>o</i> la corriente: el otro se ajusta solo según la carga. Mira las flechas ▲▼ de los indicadores para ver qué sube y qué baja.</p>
+<label>Semilla del ruido de medición</label><input type="number" id="seed" value="2026" onchange="setSeed()">
+<label>Ruido de medición: <b id="nzT" class="am m">1,0 %</b></label><input type="range" id="nz" min="0" max="5" step="0.5" value="1" oninput="NZ=this.value/100;$('nzT').textContent=(+this.value).toFixed(1).replace('.',',')+' %';refresh()">
+<div class="row"><button class="b pr" id="run" onclick="toggleRun()">▶ Iniciar ensayo</button><button class="b" onclick="addRec('manual')">📌 Registrar punto</button></div>
+<div class="row"><button class="b" onclick="sweep()">⚙ Barrido automático</button><button class="b" onclick="clearAll()">Limpiar</button></div>
+<div class="row"><button class="b" onclick="repeat10()">🔁 Repetir medición ×10</button></div><div id="rep" class="note"></div>
+<!-- Indicadores: corriente, potencia, resistencia, flujo luminoso, eficacia y eficiencia -->
+<div class="kp"><div class="k"><small>Corriente</small><b id="mI">--</b><i class="dl" id="dI"></i></div><div class="k"><small>Potencia</small><b id="mP">--</b><i class="dl" id="dP"></i></div>
+<div class="k"><small>Resistencia</small><b id="mR">--</b><i class="dl" id="dR"></i></div><div class="k"><small>Flujo luminoso</small><b id="mL">--</b><i class="dl" id="dL"></i></div>
+<div class="k"><small>Eficacia</small><b id="mK">--</b><i class="dl" id="dK"></i></div><div class="k hi"><small>Eficiencia η</small><b id="mE" class="am">--</b><i class="dl" id="dE"></i></div></div>
+<p class="note">Fuente ≤ 15 V DC: sin riesgo de choque eléctrico. Los modelos son simplificados (ver Guía).</p></div>
+<!-- COLUMNA DERECHA: circuito virtual (arriba) y gráfico en vivo (abajo); ambos siguen al ensayo -->
+<div style="display:grid;gap:16px;align-content:start">
+<!-- Circuito virtual en vivo: cambia con la carga y el voltaje del ensayo -->
+<div class="c"><h2>Circuito virtual en vivo</h2>
+<!-- Circuito: cable, fuente, amperímetro (en serie), voltímetro (en paralelo) y carga con brillo -->
+<svg id="circ" viewBox="0 0 640 230" style="width:100%;max-width:760px;display:block;margin:auto" role="img" aria-label="Circuito virtual con fuente, amperímetro, voltímetro y carga">
+<path d="M80 60H560V180H80Z" fill="none" stroke="#7a8b97" stroke-width="3"/>
+<path id="flow" d="M80 60H560V180H80Z" fill="none" stroke="#8f5fe0" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 15"/>
+<rect x="45" y="95" width="70" height="50" rx="6" fill="#5b32b0"/><text id="src" x="80" y="126" text-anchor="middle" fill="#fff" font-size="14">12.0 V</text><text x="80" y="205" text-anchor="middle" font-size="11" fill="#51636f">Fuente DC</text>
+<circle cx="260" cy="60" r="28" fill="#fff" stroke="#5b32b0" stroke-width="3"/><text x="260" y="54" text-anchor="middle" font-size="13" font-weight="700" fill="#5b32b0">A</text><text id="am" x="260" y="70" text-anchor="middle" font-size="10" fill="#1b2a35">0 mA</text><text x="260" y="108" text-anchor="middle" font-size="10" fill="#51636f">Amperímetro (serie)</text>
+<path d="M400 60V90M400 150V180" stroke="#7a8b97" stroke-width="2" stroke-dasharray="4 3"/><circle cx="400" cy="120" r="30" fill="#fff" stroke="#5b32b0" stroke-width="3"/><text x="400" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="#5b32b0">V</text><text id="vm" x="400" y="131" text-anchor="middle" font-size="10" fill="#1b2a35">0 V</text><text x="440" y="116" font-size="10" fill="#51636f">Voltímetro</text><text x="440" y="129" font-size="10" fill="#51636f">(paralelo)</text>
+<!-- Fondo blanco: "corta" el cable donde se conecta la carga (así el circuito abierto se ve abierto) -->
+<circle cx="560" cy="120" r="30" fill="#fff"/>
+<circle id="halo" cx="560" cy="120" r="46" fill="#ffc83d" fill-opacity="0"/><circle id="bulb" cx="560" cy="120" r="26" fill="#ffc83d" fill-opacity="0"/>
+<!-- Un símbolo eléctrico por carga: lámpara, módulo LED (diodo), resistencia (zigzag), motor y interruptor abierto; script.js muestra solo el activo -->
+<g class="sym" data-k="inc" fill="none" stroke="#5b32b0" stroke-width="3" stroke-linecap="round"><circle cx="560" cy="120" r="22"/><path d="M544 104l32 32M576 104l-32 32"/></g>
+<g class="sym" data-k="led" fill="none" stroke="#5b32b0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M560 94V106M548 106H572L560 128ZM548 130H572M560 130V146"/><path d="M578 108l8-8M582 118l8-8"/></g>
+<g class="sym" data-k="res" fill="none" stroke="#5b32b0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M560 94V104L568 108L552 116L568 124L552 132L560 136V146"/></g>
+<g class="sym" data-k="mot" fill="none" stroke="#5b32b0" stroke-width="3" style="display:none"><circle cx="560" cy="120" r="22"/><text x="560" y="128" text-anchor="middle" font-size="22" font-weight="700" fill="#5b32b0" stroke="none">M</text></g>
+<g class="sym" data-k="off" fill="none" stroke="#5b32b0" stroke-width="3" stroke-linecap="round" style="display:none"><path d="M560 92V100M560 140V148M560 140L580 108"/><circle cx="560" cy="100" r="4" fill="#5b32b0"/><circle cx="560" cy="140" r="4" fill="#5b32b0"/></g>
+<!-- Anillo giratorio del motor (solo cuando hay corriente) -->
+<g id="rotor" style="display:none"><circle cx="560" cy="120" r="31" fill="none" stroke="#0e9aa7" stroke-width="3" stroke-dasharray="16 12" stroke-linecap="round"/></g>
+<!-- Polaridad de la fuente -->
+<text x="96" y="54" fill="#d13438" font-size="16" font-weight="700">+</text><text x="96" y="174" fill="#222" font-size="16" font-weight="700">−</text>
+<text id="ldn" x="560" y="205" text-anchor="middle" font-size="11" fill="#51636f"></text></svg>
+<!-- Reparto de la energía: parte útil (luz o movimiento) frente a calor -->
+<div class="note" style="margin:10px 0 4px">¿A dónde va la energía?</div>
+<div class="split"><div id="spU"></div><div id="spH"></div></div>
+<!-- Explicación breve del fenómeno (la escribe explain() en script.js) -->
+<div id="why" class="box" style="min-height:64px"></div>
+<p class="note">Los instrumentos, el brillo de la carga y la explicación siguen al ensayo en tiempo real: cambie la carga o el voltaje y observe. <b>Simplificación:</b> fuente, cables e instrumentos ideales (sin resistencia interna); el símbolo de la carga cambia según el componente.</p></div>
+<!-- Curva interactiva: el punto se mueve sobre la curva de la carga al cambiar voltaje o corriente -->
+<div class="c"><h2>Curva interactiva: mira qué pasa al mover el control</h2>
+<div class="row" id="mbtn" style="margin-top:0"><button class="b pr" data-m="i" onclick="setMetric('i')">Corriente</button><button class="b" data-m="p" onclick="setMetric('p')">Potencia</button><button class="b" data-m="r" onclick="setMetric('r')">Resistencia</button><button class="b" data-m="eta" onclick="setMetric('eta')">Eficiencia</button></div>
+<div style="height:230px;margin-top:10px"><canvas id="cv"></canvas></div>
+<div id="cvTxt" class="note" style="font-size:13px"></div>
+<h2 style="margin-top:16px">Potencia en tiempo real (W)</h2><div style="height:120px"><canvas id="live"></canvas></div>
+<p class="note">Pulsa «Iniciar ensayo» para ver la potencia medida cada 0,5 s (con ruido). «Barrido automático» registra 4 cargas × 5 tensiones (6–14 V) con la misma semilla.</p></div>
+</div>
+</div>
+</section>
+
+<!-- 1b. CIRCUITO EXTERNO: medir circuitos armados en Tinkercad y analizarlos aquí -->
+<section class="tab" id="t-ext"><div class="c"><h2>Circuito externo (Tinkercad) — cómo usar esta pestaña</h2>
+<p>Aquí puedes analizar un circuito que armaste en <b>Tinkercad Circuits</b> (u otro simulador). Tinkercad no envía los datos automáticamente: <b>tú mides y los ingresas</b>, y LabEnergy los calcula, los grafica y te ayuda a interpretarlos.</p>
+<ol>
+<li><b>Arma tu circuito en Tinkercad:</b> una fuente de voltaje, la carga que quieras estudiar (resistencia, LED, motor…) y un multímetro.</li>
+<li><b>(Opcional) Míralo aquí:</b> en Tinkercad abre las <i>Propiedades</i> del circuito y cambia la privacidad a <b>Pública</b>; luego abre el circuito, pulsa <b>Incrustar</b>, copia el código y pégalo en la casilla de abajo.</li>
+<li><b>Mide en varios voltajes:</b> cambia la tensión de la fuente y anota el <b>voltaje</b> (multímetro en paralelo con la carga) y la <b>corriente</b> (multímetro en serie). Usa al menos <b>3 puntos distintos</b>.</li>
+<li><b>Ingresa los datos:</b> uno por uno con el formulario, o pega varias líneas con formato <span class="m">voltaje;corriente</span> (por ejemplo, copiadas del Monitor Serie de Arduino).</li>
+<li><b>Revisa los resultados:</b> eficiencia, rango de operación, tabla, gráficos, diagnóstico y consumo. Puedes descargar todo en CSV.</li></ol>
+<p class="note">Consejos: la corriente se ingresa en <b>mA</b> (al pegar datos puedes indicar que vienen en A). Ingresa el flujo luminoso (lm) para que la página calcule la <b>eficiencia η</b>; sin él solo se calculan potencia, resistencia y rango. ¿Primera vez? Usa los botones «Ejemplo» para ver cómo funciona.</p></div>
+
+<div class="c"><h2>1. Tu circuito de Tinkercad (opcional)</h2>
+<label>Pega el código de «Incrustar» de Tinkercad (o su enlace)</label>
+<div class="row" style="margin-top:0"><input id="exUrl" placeholder="https://www.tinkercad.com/things/..." style="flex:3"><button class="b" onclick="extEmbed()">Mostrar circuito</button></div>
+<div id="exFrame" style="margin-top:12px"></div>
+<p class="note">Si aparece «Sorry, that page is missing», el circuito aún no es público o se pegó un enlace de invitación en vez del código de «Incrustar». Mientras tanto, ábrelo en otra pestaña y trabaja con ambas ventanas lado a lado.</p></div>
+
+<div class="g2"><div class="c"><h2>2a. Ingresar un punto</h2>
+<label>Voltaje medido en la carga (V)</label><input type="number" id="exV" step="any" min="0">
+<label>Corriente medida (mA)</label><input type="number" id="exI" step="any" min="0">
+<label>Flujo luminoso (lm) — para calcular la eficiencia</label><input type="number" id="exLm" step="any" min="0">
+<div class="row"><button class="b pr" onclick="extAdd()">Agregar punto</button><button class="b" onclick="extUndo()">Quitar el último</button></div></div>
+<div class="c"><h2>2b. Pegar varios puntos</h2>
+<label>Una línea por punto: voltaje;corriente</label>
+<textarea id="exTxt" placeholder="2;4,5&#10;4;9&#10;6;13,6" style="font-family:'Space Mono',monospace;min-height:96px"></textarea>
+<label>La corriente viene en</label><select id="exUp"><option value="mA">mA (miliamperios)</option><option value="A">A (amperios)</option></select>
+<div class="row"><button class="b pr" onclick="extPaste()">Agregar puntos</button></div></div></div>
+<div class="c"><div class="row" style="margin:0"><button class="b" onclick="extExample(1)">Ejemplo: resistencia 220 Ω</button><button class="b" onclick="extExample(2)">Ejemplo: LED con resistencia</button><button class="b" onclick="extClear()">Limpiar todo</button><button class="b" onclick="extCsv()">📥 Descargar CSV</button></div><div id="exMsg" class="note"></div>
+<details style="margin-top:10px"><summary class="note" style="cursor:pointer">¿Usas un Arduino en Tinkercad? Código de ejemplo para el Monitor Serie</summary>
+<p class="note">Conecta el potenciómetro (pin central) a A0 y a una resistencia de 10 Ω en serie; la salida de esa resistencia va a la carga y a A1; el otro extremo de la carga va a GND. Es un ejemplo: pruébalo en tu simulación.</p>
+<pre>const float Rs = 10.0;            // resistencia en serie (ohm)
+void setup(){ Serial.begin(9600); }
+void loop(){
+  float vIn   = analogRead(A0) * 5.0 / 1023.0;  // antes de Rs
+  float vLoad = analogRead(A1) * 5.0 / 1023.0;  // sobre la carga
+  float iMa   = (vIn - vLoad) / Rs * 1000.0;    // corriente en mA
+  Serial.print(vLoad); Serial.print(";"); Serial.println(iMa);
+  delay(500);
+}</pre></details></div>
+
+<!-- Eficiencia del circuito externo (la escribe extEff() en script.js) -->
+<div class="eff" id="exEff"></div>
+<!-- Rango de operación del circuito: lo probado, una estimación hasta 15 V y el rango seguro si se informa la corriente máxima -->
+<div class="c"><h2>Rango de operación de tu circuito</h2><div id="exRange"></div>
+<label>Corriente máxima que soporta tu componente (mA) — opcional</label><input type="number" id="exImax" step="any" min="0" oninput="extRender()" placeholder="Ej: 20 para un LED común">
+<div id="exSafe" style="margin-top:10px"></div></div>
+<div class="c"><h2>3. Tabla de mediciones</h2><div class="ov"><table><thead><tr><th class="n">N°</th><th class="n">V</th><th class="n">I (mA)</th><th class="n">P (W)</th><th class="n">R (Ω)</th><th class="n">lm</th><th class="n">K (lm/W)</th><th class="n">η (%)</th></tr></thead><tbody id="exTb"></tbody></table></div></div>
+<div class="g2"><div class="c"><h2>Curva I–V</h2><div style="height:230px"><canvas id="cxIV"></canvas></div></div><div class="c"><h2>Potencia vs voltaje</h2><div style="height:230px"><canvas id="cxP"></canvas></div></div></div>
+<div class="c"><h2>Diagnóstico automático</h2><div id="exDx" class="box"></div><p class="note">Es una ayuda orientativa basada en tus datos; confírmalo con la teoría.</p>
+<h3>Consumo estimado</h3><div class="row" style="margin-top:0"><div><label>Horas de uso al día</label><input type="number" id="exH" value="5" step="0.5" oninput="extRender()"></div><div><label>Tarifa (CLP/kWh)</label><input type="number" id="exT" value="150" oninput="extRender()"></div></div><p id="exCost" style="margin-top:10px"></p></div>
+</section>
+
+<!-- 2. GUIA -->
+<section class="tab" id="t-guide"><div class="c"><h2>Guía de laboratorio N°1 — Eficiencia de conversión en cargas de baja tensión</h2>
+<!-- Guía de laboratorio: pregunta, hipótesis, variables, medida de eficiencia, modelos y procedimiento -->
+<p><b>Pregunta de investigación:</b> ¿cómo cambia la fracción de potencia eléctrica convertida en luz (o trabajo útil) según el tipo de carga y la tensión aplicada?</p>
+<div class="box"><b>Hipótesis H1:</b> a 12 V, el módulo LED entrega al menos 5 veces más lúmenes por watt que la lámpara incandescente, y la resistencia pura (control) convierte 0 % de la potencia en luz.</div>
+<label>Su predicción antes de medir (¿cuántas veces más eficiente? ¿por qué?)</label><textarea placeholder="Escriba su hipótesis…"></textarea>
+<h3>Variables</h3><div class="ov"><table><tr><th>Tipo</th><th>Variable</th><th>Cómo se maneja</th></tr>
+<tr><td>Independiente</td><td>Tensión V (0–15 V DC) y tipo de carga</td><td>Control deslizante / selector</td></tr>
+<tr><td>Dependiente</td><td>I, P = V·I, R = V/I, flujo (lm), eficacia K (lm/W), η (%)</td><td>Calculadas por el motor de datos</td></tr>
+<tr><td>Controladas</td><td>Fuente DC ideal, temperatura ambiente, ruido ±1 % con semilla fija</td><td>Constantes del modelo</td></tr></table></div>
+<h3>Medida de eficiencia</h3>
+<p>Lámparas: <span class="m">η = K / 250 lm/W</span> (250 lm/W ≈ luz blanca ideal, supuesto del modelo). Motor: <span class="m">η = P_mecánica / P_eléctrica</span>. Calor disipado: <span class="m">P·(1 − η)</span>. Para lámparas, el valor de K (lm/W) es el indicador comparativo principal.</p>
+<h3>Modelos (resumen)</h3><ul>
+<li>Incandescente: R(V) = 14,5·(V/12)^0,2 Ω — la resistencia <b>aumenta</b> con la temperatura del filamento; K = 11·(V/12)^1,2 lm/W.</li>
+<li>LED: conduce sobre ~9 V, I = 0,055·(V−9) A; K ≈ 100 lm/W, decrece levemente con sobrepotencia.</li>
+<li>Resistencia 10 Ω: I = V/R; toda la potencia se disipa como calor.</li>
+<li>Motor DC: I = 0,035·V A; η ≈ 62 % máx. a 12 V.</li></ul>
+<h3>Procedimiento</h3><ol>
+<li>Escriba su predicción. 2. Ejecute «Barrido automático» (o registre puntos manualmente a 12 V para cada carga).</li>
+<li>Vaya a <i>Resultados</i>: compare curvas I–V y η–V. 4. Conteste el cuestionario. 5. Descargue el CSV.</li></ol>
+<p class="note">Los valores de K son referenciales de catálogo; el modelo es una simulación, no una medición de hardware.</p></div></section>
+
+<!-- TEORÍA exprés: lo justo para experimentar -->
+<section class="tab" id="t-theory"><div class="c"><h2>Teoría exprés: lo justo para experimentar</h2>
+<div class="box">⚡ <b>Idea clave:</b> una carga recibe energía eléctrica y la transforma en algo <b>útil</b> (luz o movimiento) y en <b>calor</b>. La <b>eficiencia η</b> te dice cuánta es útil.</div>
+<div class="g3">
+<div class="k"><small>Ley de Ohm</small><b class="m">I = V / R</b><p>Más voltaje → más corriente. Más resistencia → menos corriente.</p></div>
+<div class="k"><small>Potencia</small><b class="m">P = V · I</b><p>Los watts que consume la carga cada segundo.</p></div>
+<div class="k hi"><small>Eficiencia</small><b class="m">η = útil / total</b><p>Un LED ≈ 40 %. Una incandescente ≈ 4 %.</p></div></div>
+<h3>Las 5 cargas de un vistazo</h3>
+<div class="ov"><table><tr><th>Carga</th><th>¿Qué hace con la energía?</th><th>Dato clave a 12 V</th></tr>
+<tr><td><svg class="ico" data-k="inc" viewBox="0 0 200 120"></svg><b>Incandescente</b></td><td>Calienta un filamento hasta que brilla</td><td>η ≈ 4 %: casi todo es calor</td></tr>
+<tr><td><svg class="ico" data-k="led" viewBox="0 0 200 120"></svg><b>Módulo LED</b></td><td>Módulo de 12 V (3 LED en serie + resistencia): convierte la corriente directo en luz; no enciende bajo ≈ 9 V</td><td>η ≈ 40 %</td></tr>
+<tr><td><svg class="ico" data-k="res" viewBox="0 0 200 120"></svg><b>Resistencia 10 Ω</b></td><td>Solo produce calor (carga de control)</td><td>η = 0 %; P = V²/R</td></tr>
+<tr><td><svg class="ico" data-k="mot" viewBox="0 0 200 120"></svg><b>Motor DC</b></td><td>Convierte energía en movimiento</td><td>η ≈ 62 %</td></tr>
+<tr><td><svg class="ico" data-k="off" viewBox="0 0 200 120"></svg><b>Circuito abierto</b></td><td>Sin camino cerrado no circula corriente</td><td>I = 0 y P = 0</td></tr></table></div>
+<h3>🧪 Pruébalo tú en el Ensayo</h3>
+<ul>
+<li>Elige la <b>resistencia</b> y baja la corriente a la mitad. ¿Qué pasa con la potencia? <span class="note">(pista: P = I² · R)</span></li>
+<li>Elige el <b>LED</b> y sube el voltaje desde 0. ¿A partir de cuántos volts se enciende?</li>
+<li>Compara <b>LED vs incandescente</b> a 12 V. ¿Cuál desperdicia más energía en calor?</li></ul>
+<p class="note">Los valores vienen del modelo simulado del laboratorio, no de aparatos reales.</p>
+</div></section>
+
+<!-- 3. RESULTADOS -->
+<section class="tab" id="t-res">
+<!-- Conclusión de eficiencia (la escribe effRes() en script.js) y ranking de cargas por eficiencia -->
+<div class="eff" id="effRes"></div>
+<div class="c"><h2>Ranking de eficiencia (η a 12 V)</h2><div id="rank"></div><p class="note">η = porcentaje de la energía eléctrica que se convierte en lo que buscamos (luz o movimiento). El resto se pierde como calor.</p></div>
+<div class="c"><h2>Datos registrados</h2>
+<!-- Tabla de datos registrados (se llena desde script.js) -->
+<div class="ov"><table><thead><tr><th>Carga</th><th class="n">V</th><th class="n">I (mA)</th><th class="n">P (W)</th><th class="n">R (Ω)</th><th class="n">lm</th><th class="n">K (lm/W)</th><th class="n">η (%)</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="row"><button class="b" onclick="csv()">📥 Descargar CSV</button></div></div>
+<!-- Gráficos de curva I–V y de eficiencia vs voltaje -->
+<div class="g2"><div class="c"><h2>Curva I–V</h2><div style="height:250px"><canvas id="cIV"></canvas></div></div>
+<div class="c"><h2>Eficiencia η (%) vs tensión</h2><div style="height:250px"><canvas id="cEta"></canvas></div></div></div>
+<!-- Verificación de la hipótesis H1 y cuestionario -->
+<div class="c"><h2>Verificación de la hipótesis H1 (a 12 V)</h2><div id="h1" class="dim">Registre datos para evaluar.</div>
+<h3>Cuestionario</h3><label>1. El filamento incandescente aumenta su resistencia al calentarse. Con sus datos, ¿qué ocurre con R al subir de 6 V a 14 V y por qué?</label><textarea></textarea>
+<label>2. Para un mismo flujo luminoso, ¿qué fracción de la potencia ahorra el LED? Fundamente con K.</label><textarea></textarea></div></section>
+
+<!-- VALIDACIÓN DE USABILIDAD: cuestionario SUS; las respuestas se envían a una hoja de Google (ver SURVEY_URL en script.js) -->
+<section class="tab" id="t-val"><div class="c"><h2>Tu opinión importa: validación de usabilidad</h2>
+<div class="box">👋 Después de probar LabEnergy, responde este breve cuestionario (≈ 3 minutos). Es <b>anónimo</b> y se usa solo para mejorar el proyecto.</div>
+<div class="g2" style="margin-top:12px"><div><label>Código (opcional, ej. P01)</label><input id="pid" placeholder="P01"></div>
+<div><label>Tu perfil</label><select id="prf"><option>Estudiante universitario</option><option>Estudiante de enseñanza media</option><option>Estudiante de enseñanza básica</option><option>Docente</option><option>Otro</option></select></div></div>
+<label>¿Lograste completar la tarea sin ayuda? (ejecutar un barrido, comparar LED e incandescente y explicar cuál es más eficiente)</label>
+<select id="tsk"><option>Sí</option><option>Con algo de ayuda</option><option>No</option></select>
+<!-- Las 10 preguntas SUS se dibujan desde script.js -->
+<div class="sus" id="sus"></div>
+<label>Comentarios o sugerencias (opcional)</label><textarea id="cmt" placeholder="¿Qué te gustó? ¿Qué mejorarías?"></textarea>
+<div class="row"><button class="b pr" onclick="saveSus()">Enviar respuestas</button></div><div id="susMsg" class="note"></div></div>
+<div class="c"><h2>Protocolo y respuestas</h2>
+<p class="note" style="margin-top:0"><b>Método:</b> sesión individual de ~15 min con tarea guiada y cuestionario SUS. <b>Muestra objetivo:</b> n ≥ 10. <b>Criterio:</b> SUS promedio ≥ 68.</p>
+<div id="susRes" class="dim"></div></div></section>
+</div>
+<!-- Librería Chart.js (gráficos) y luego el código propio script.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="script.js"></script></body></html>
