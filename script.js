@@ -125,7 +125,7 @@ function csv(){if(!rec.length)return alert('Aún no hay datos registrados.');
 // ---------- 9. VALIDACIÓN DE USABILIDAD (SUS) ----------
 // SURVEY_URL: dirección (termina en /exec) de un Google Apps Script que recibe cada respuesta y la guarda en una hoja de Google Sheets.
 // Si está vacía, las respuestas solo se guardan en el navegador de quien responde. Las instrucciones para crearla están en el README.
-const SURVEY_URL='https://script.google.com/macros/s/AKfy.../exec';
+const SURVEY_URL=https://script.google.com/macros/s/AKfycbyc4zpFrPCFYIh-J4jKhm6Q2t5OJw1PQYYCoJoy-Na23ntqYis6qL7g0hlVk4wCO4Cn/exec;
 // Las 10 preguntas del cuestionario SUS (escala 1–5).
 const SQ=['Creo que me gustaría usar este laboratorio con frecuencia.','Encontré el sistema innecesariamente complejo.','Pensé que el sistema era fácil de usar.','Creo que necesitaría ayuda de un técnico para usarlo.','Las funciones estaban bien integradas.','Hubo demasiada inconsistencia en el sistema.','Imagino que la mayoría aprendería a usarlo rápidamente.','Me pareció muy engorroso de usar.','Me sentí con mucha confianza usándolo.','Necesité aprender muchas cosas antes de usarlo.'];
 // Dibuja las preguntas con sus opciones 1–5.
