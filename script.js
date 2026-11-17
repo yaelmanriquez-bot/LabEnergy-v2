@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id),EF=0.4,KID=250;
 // Incandescente: la resistencia AUMENTA con el voltaje (filamento más caliente): R(V) = 14,5·(V/12)^0,2 Ω, y I = V/R.
 const LD={inc:{n:'Incandescente',I:v=>v>0?v/(14.5*Math.pow(v/12,.2)):0,K:v=>11*Math.pow(v/12,1.2)},
 // LED: no conduce bajo 9 V (umbral); sobre 9 V la corriente crece linealmente. K ≈ 100 lm/W y baja un poco si P > 2 W.
-led:{n:'Módulo LED',I:v=>v>9?.055*(v-9):0,K:(v,p)=>Math.max(0,100-3*Math.max(0,p-2))},
+led:{n:'Módulo LED',I:v=>v>9?.055*(v-9):0,K:(v,p)=>p>0?Math.max(0,100-3*Math.max(0,p-2)):0},
 // Resistencia pura (carga de control): Ley de Ohm, I = V/10. K = 0 porque toda la potencia se convierte en calor.
 res:{n:'Resistencia 10 Ω',I:v=>v/10,K:()=>0},mot:{n:'Motor DC',I:v=>.035*v,E:v=>Math.max(0,.62-.01*Math.abs(v-12))},
 // Circuito abierto: no circula corriente.
@@ -44,8 +44,8 @@ function tick(){t+=.5;const m=cur();show(m);hist.push({t,...m});live.data.labels
 function toggleRun(){run=!run;$('run').textContent=run?'⏹ Pausar ensayo':'▶ Iniciar ensayo';if(run)timer=setInterval(tick,500);else clearInterval(timer)}
 // Registra el punto actual (o uno dado) en la tabla de resultados.
 function addRec(src,m){m=m||cur();m.src=src;rec.push(m);render()}
-// Barrido automático: mide las 4 cargas a 6, 8, 10, 12 y 14 V con la misma semilla (resultados idénticos cada vez) y abre Resultados.
-function sweep(){const r=rng32(+$('seed').value||1);rec=rec.filter(x=>x.src!=='barrido');['inc','led','res','mot'].forEach(k=>[6,8,10,12,14].forEach(v=>{const m=meas(k,v,r);m.src='barrido';rec.push(m)}));render();go('res')}
+// Barrido automático: mide las 4 cargas a 6, 8, 9, 10, 12 y 14 V (el punto de 9 V muestra el umbral del LED) con la misma semilla (resultados idénticos cada vez) y abre Resultados.
+function sweep(){const r=rng32(+$('seed').value||1);rec=rec.filter(x=>x.src!=='barrido');['inc','led','res','mot'].forEach(k=>[6,8,9,10,12,14].forEach(v=>{const m=meas(k,v,r);m.src='barrido';rec.push(m)}));render();go('res')}
 // Limpiar: borra los datos registrados y el gráfico en vivo, y reinicia el ruido.
 function clearAll(){rec=[];hist=[];t=0;live.data.labels=[];live.data.datasets[0].data=[];live.update();setSeed();render()}
 // ---------- 5. CIRCUITO VIRTUAL ----------
@@ -93,37 +93,60 @@ function repeat10(){const r=rng32(+$('seed').value||1),k=$('load').value,v=+$('v
 function avgAt12(k,f){const a=rec.filter(x=>x.k===k&&x.v===12);return a.length?{v:a.reduce((s,x)=>s+x[f],0)/a.length,m:1}:{v:(()=>{const m=meas(k,12,()=>.5);return m[f]})(),m:0}}
 // render(): redibuja la tabla de datos, las curvas I–V y η–V, y verifica la hipótesis H1 (razón K_LED / K_incandescente ≥ 5).
 function render(){$('tb').innerHTML=rec.length?rec.map(x=>`<tr><td>${LD[x.k].n}</td><td class=n>${x.v}</td><td class=n>${x.i.toFixed(0)}</td><td class=n>${x.p.toFixed(2)}</td><td class=n>${x.i>0?x.r.toFixed(1):'∞'}</td><td class=n>${x.lm.toFixed(0)}</td><td class=n>${x.K.toFixed(1)}</td><td class=n>${x.eta.toFixed(1)}</td></tr>`).join(''):'<tr><td colspan=8 class=dim>Sin datos. Use «Registrar punto» o «Barrido automático».</td></tr>';
- ['cIV','cEta'].forEach((id,j)=>{const c=id==='cIV'?civ:ceta;c.data.datasets=Object.keys(COL).filter(k=>j==0||k!=='res').map(k=>({label:LD[k].n,borderColor:COL[k],backgroundColor:COL[k],tension:.2,data:rec.filter(x=>x.k===k).sort((a,b)=>a.v-b.v).map(x=>({x:x.v,y:j?x.eta:x.i}))}));c.update()});
+ ['cIV','cEta'].forEach((id,j)=>{const c=id==='cIV'?civ:ceta;c.data.datasets=Object.keys(COL).filter(k=>j==0||k!=='res').map(k=>({label:LD[k].n,borderColor:COL[k],backgroundColor:COL[k],tension:0,data:rec.filter(x=>x.k===k).sort((a,b)=>a.v-b.v).map(x=>({x:x.v,y:j?x.eta:x.i}))}));c.update()});
  const a=avgAt12('inc','K'),b=avgAt12('led','K'),z=avgAt12('res','eta'),ratio=b.v/a.v;
- $('h1').innerHTML=`K incandescente = <b>${a.v.toFixed(1)}</b> lm/W · K LED = <b>${b.v.toFixed(1)}</b> lm/W · razón = <b class="m">${ratio.toFixed(1)}×</b> · η resistencia = ${z.v.toFixed(1)} %<br>H1 <b class="${ratio>=5&&z.v===0?'ok':'bad'}">${ratio>=5&&z.v===0?'se cumple':'no se cumple'}</b> con ${a.m&&b.m?'datos registrados a 12 V':'valores del modelo (registre puntos a 12 V para usar sus datos)'}.`;effRes()}
+ $('h1').innerHTML=`K incandescente = <b>${a.v.toFixed(1)}</b> lm/W · K LED = <b>${b.v.toFixed(1)}</b> lm/W · razón = <b class="m">${ratio.toFixed(1)}×</b> · η resistencia = ${z.v.toFixed(1)} %<br>H1 <b class="${ratio>=5&&z.v===0?'ok':'bad'}">${ratio>=5&&z.v===0?'se cumple':'no se cumple'}</b> con ${a.m&&b.m?'datos registrados a 12 V':'valores del modelo (registre puntos a 12 V para usar sus datos)'}.`;effRes();projRender()}
 // effRes(): conclusión de EFICIENCIA (a 12 V) y ranking de cargas por η, con datos registrados o, si no hay, con el modelo.
 function effRes(){const g=(k,f)=>avgAt12(k,f),Ki=g('inc','K'),Kl=g('led','K'),Ei=g('inc','eta'),El=g('led','eta'),Em=g('mot','eta'),Er=g('res','eta'),src=Ki.m&&Kl.m?'tus datos registrados':'el modelo (registra puntos a 12 V para usar tus datos)',ratio=Kl.v/Ki.v,save=(1-Ki.v/Kl.v)*100;
  $('effRes').innerHTML=`<h2>Conclusión de eficiencia (a 12 V)</h2><div class="kk"><div><small>Módulo LED</small><span class="big">${El.v.toFixed(0)} %</span><br>de la energía → luz</div><div><small>Incandescente</small><span class="big">${Ei.v.toFixed(1)} %</span><br>de la energía → luz</div><div><small>El LED es</small><span class="big">${ratio.toFixed(1)}×</span><br>más eficiente</div><div><small>Ahorro a igual luz</small><span class="big">${save.toFixed(0)} %</span><br>menos potencia</div></div>
  <p>Con ${src}: por cada 100 J de energía eléctrica, la lámpara incandescente pierde ≈ <b>${(100-Ei.v).toFixed(0)} J</b> como calor y el LED ≈ <b>${(100-El.v).toFixed(0)} J</b>. La resistencia de control tiene η = ${Er.v.toFixed(0)} % (toda su energía es calor) y el motor convierte ≈ <b>${Em.v.toFixed(0)} %</b> en movimiento.</p>
  <p><b>Conclusión:</b> ser más eficiente es producir la misma luz con menos energía. Para 800 lm, el LED necesita ≈ <b>${(800/Kl.v).toFixed(0)} W</b> y la incandescente ≈ <b>${(800/Ki.v).toFixed(0)} W</b>.</p>`;
  const L=[['led',El.v],['mot',Em.v],['inc',Ei.v],['res',Er.v]].sort((a,b)=>b[1]-a[1]),mx=Math.max(...L.map(x=>x[1]),1);
- $('rank').innerHTML=L.map(([k,v])=>`<div class="bar"><span>${LD[k].n}</span><div style="flex:1;background:#ece8f8;border-radius:8px"><i style="width:${Math.max(2,v/mx*100)}%"></i></div><em>${v.toFixed(1)} %</em></div>`).join('')}
+ $('rank').innerHTML=L.map(([k,v])=>`<div class="bar"><span>${LD[k].n}</span><div style="flex:1;background:var(--trk);border-radius:8px"><i style="width:${Math.max(2,v/mx*100)}%"></i></div><em>${v.toFixed(1)} %</em></div>`).join('')}
+// ---------- 7b. PROYECCIÓN RESIDENCIAL ----------
+// projRender(): con la eficacia K a 12 V (datos registrados o modelo) calcula, para n lámparas que den la misma luz, la potencia, la energía anual, el costo en CLP y el CO₂ (EF = 0,4 kg/kWh), y el ahorro al pasar de incandescente a LED.
+function projRender(){if(!$('pjOut'))return;const n=+$('pjN').value||0,lm=+$('pjLm').value||0,h=+$('pjH').value||0,tf=+$('pjT').value||0,pr=+$('pjP').value||0,a=avgAt12('inc','K'),b=avgAt12('led','K');
+ if(!(a.v>0&&b.v>0&&n>0&&lm>0)){$('pjOut').innerHTML='<h2>Ahorro anual</h2><p>Ingresa valores positivos de lámparas y lúmenes.</p>';$('pjTb').innerHTML='';return}
+ const f=K=>{const W=n*lm/K,kwh=W*h*365/1000;return{K,W,kwh,clp:kwh*tf,co2:kwh*EF}},I=f(a.v),L=f(b.v),S={W:I.W-L.W,kwh:I.kwh-L.kwh,clp:I.clp-L.clp,co2:I.co2-L.co2},pay=S.clp>0?n*pr/S.clp*12:null,
+ N=(x,d=0)=>x.toLocaleString('es-CL',{minimumFractionDigits:d,maximumFractionDigits:d}),src=a.m&&b.m?'tus datos registrados a 12 V':'el modelo (registra puntos a 12 V para usar tus datos)';
+ $('pjOut').innerHTML=`<h2>Ahorro anual al cambiar ${n} lámpara${n===1?'':'s'} incandescente${n===1?'':'s'} por LED (${N(lm)} lm cada una)</h2><div class="kk"><div><small>Ahorro en dinero</small><span class="big">$${N(S.clp)}</span><br>CLP por año</div><div><small>Energía ahorrada</small><span class="big">${N(S.kwh,1)}</span><br>kWh por año</div><div><small>CO₂ evitado</small><span class="big">${N(S.co2,1)}</span><br>kg por año</div><div><small>Recuperas la inversión en</small><span class="big">${pay==null?'—':pay<1?'< 1':N(pay,1)}</span><br>${pay==null?'sin ahorro':'meses'}</div></div><p>Con ${src}: para dar la misma luz, la incandescente necesita ≈ <b>${N(I.W,0)} W</b> y el LED ≈ <b>${N(L.W,0)} W</b> en total (${N(S.W/I.W*100)} % menos potencia). Tarifa ${N(tf)} CLP/kWh, ${N(h,1)} h/día, 365 días; el módulo LED se supone a $${N(pr)} CLP c/u.</p>`;
+ $('pjTb').innerHTML=[['Incandescente',I],['Módulo LED',L]].map(([t,x])=>`<tr><td>${t}</td><td class=n>${N(x.K,1)}</td><td class=n>${N(x.W,0)}</td><td class=n>${N(x.kwh,1)}</td><td class=n>$${N(x.clp)}</td><td class=n>${N(x.co2,1)}</td></tr>`).join('')+`<tr><td><b class="ok">Ahorro</b></td><td class=n>—</td><td class=n>${N(S.W,0)}</td><td class=n>${N(S.kwh,1)}</td><td class=n>$${N(S.clp)}</td><td class=n>${N(S.co2,1)}</td></tr>`}
 // ---------- 8. NAVEGACIÓN Y EXPORTACIÓN ----------
 // go(id): muestra la pestaña elegida y marca el botón activo del menú.
 function go(id){document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id==='t-'+id));document.querySelectorAll('#nav button').forEach(e=>e.classList.toggle('on',e.dataset.t===id))}
 // Crea los botones del menú de pestañas.
-[['lab','🔬 Ensayo'],['ext','🔌 Circuito externo'],['guide','📖 Guía'],['theory','📚 Teoría'],['res','📊 Resultados'],['val','👥 Validación']].forEach(([i,n])=>{const b=document.createElement('button');b.textContent=n;b.dataset.t=i;b.onclick=()=>go(i);if(i==='lab')b.className='on';$('nav').append(b)});
+[['lab','🔬 Ensayo'],['ext','🔌 Circuito externo'],['guide','📖 Guía'],['theory','📚 Teoría'],['res','📊 Resultados'],['proj','🏠 Proyección residencial'],['val','👥 Validación']].forEach(([i,n])=>{const b=document.createElement('button');b.textContent=n;b.dataset.t=i;b.onclick=()=>go(i);if(i==='lab')b.className='on';$('nav').append(b)});
 // Llena el selector de carga con las opciones del modelo.
 $('load').innerHTML=['inc','led','res','mot','off'].map(k=>`<option value=${k}>${LD[k].n}</option>`).join('');
 // dl(): descarga un archivo CSV (usa la capacidad de descargas si la página está publicada como artifact; si no, descarga directa).
 async function dl(name,txt){try{const d=window.claude&&await claude.use('downloads');if(d){await d.save({filename:name,data:txt});return}}catch(e){if(e&&e.code==='declined')return}
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv'}));a.download=name;a.click()}
-// pngChart(): descarga un gráfico (Chart.js) como imagen PNG con fondo blanco, título y marca.
-// Usa un lienzo auxiliar para que la imagen no salga con fondo transparente.
-function pngChart(chart,name,title){if(!rec.length)return alert('Aún no hay datos registrados.');
- const src=chart.canvas,w=src.width,h=src.height,s=Math.max(1,w/src.clientWidth),pad=Math.round(14*s),th=Math.round(34*s);
- const o=document.createElement('canvas');o.width=w+pad*2;o.height=h+pad*2+th;
- const x=o.getContext('2d');x.fillStyle='#ffffff';x.fillRect(0,0,o.width,o.height);
- x.fillStyle='#1e2347';x.font='700 '+Math.round(15*s)+'px Orbitron, sans-serif';x.textBaseline='middle';x.fillText(title,pad,pad/2+th/2);
- x.drawImage(src,pad,pad+th);
- o.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)},'image/png')}
+// histCsv(): exporta la SERIE TEMPORAL del ensayo en vivo (una fila cada 0,5 s = 2 Hz) con todas las magnitudes.
+function histCsv(){if(!hist.length)return alert('Pulsa «Iniciar ensayo» para registrar la serie temporal (una lectura cada 0,5 s).');
+ dl('labenergy_serie_temporal.csv',toCsv(['Tiempo (s)','Carga','Tensión (V)','Corriente (mA)','Potencia (W)','Resistencia (Ω)','Flujo luminoso (lm)','Eficacia (lm/W)','Eficiencia η (%)','Semilla'],
+  hist.map(x=>[fz(x.t.toFixed(1)),LD[x.k].n,fz(x.v),fz(x.i.toFixed(1)),fz(x.p.toFixed(3)),x.i>0?fz(x.r.toFixed(1)):'∞',fz(x.lm.toFixed(0)),fz(x.K.toFixed(1)),fz(x.eta.toFixed(1)),$('seed').value])))}
+// PNG de gráficos (Chart.js): fondo blanco, título, subtítulo opcional y marca. Se dibuja en un lienzo auxiliar para que no quede transparente.
+// pngRender(): arma la imagen (síncrono, captura el estado actual del gráfico). pngSave(): la descarga.
+function pngRender(chart,title,sub){const dk=isDark();if(dk)applyChartTheme(false);const src=chart.canvas,w=src.width,h=src.height,s=Math.max(1,w/src.clientWidth),pad=Math.round(14*s),th=Math.round(34*s),sh=sub?Math.round(24*s):0;
+ const o=document.createElement('canvas');o.width=w+pad*2;o.height=h+pad*2+th+sh;
+ const x=o.getContext('2d');x.fillStyle='#ffffff';x.fillRect(0,0,o.width,o.height);x.textBaseline='middle';
+ x.fillStyle='#1e2347';x.font='700 '+Math.round(15*s)+'px Orbitron, sans-serif';x.fillText(title,pad,pad/2+th/2);
+ if(sub){x.fillStyle='#4d567a';x.font=Math.round(12*s)+'px "Exo 2", sans-serif';x.fillText(sub,pad,pad/2+th+sh/2)}
+ x.drawImage(src,pad,pad+th+sh);if(dk)applyChartTheme(true);return o}
+function pngSave(o,name){o.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)},'image/png')}
+// pngChart(): descarga un gráfico de Resultados (pide que haya datos registrados).
+function pngChart(chart,name,title){if(!rec.length)return alert('Aún no hay datos registrados.');pngSave(pngRender(chart,title),name)}
 // pngAll(): descarga los dos gráficos de Resultados (curva I–V y eficiencia vs tensión).
 function pngAll(){pngChart(civ,'labenergy_curva_IV.png','Curva I–V · LabEnergy');setTimeout(()=>pngChart(ceta,'labenergy_eficiencia_vs_tension.png','Eficiencia η (%) vs tensión · LabEnergy'),300)}
+// Curva interactiva: título con la carga y la magnitud elegidas, y subtítulo con la lectura del punto actual.
+const slug=t=>t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+function cvImg(){const L=LD[$('load').value].n,M=MT[cm][0];return{o:pngRender(cv,'Curva interactiva: '+M+' vs voltaje · '+L,$('cvTxt').textContent.split(' El punto')[0].trim()),name:'labenergy_curva_'+slug(M.split(' (')[0])+'_'+slug(L)+'.png'}}
+// pngCurve(): descarga la curva que se está viendo (magnitud actual, carga actual, punto en el voltaje actual).
+function pngCurve(){const r=cvImg();pngSave(r.o,r.name)}
+// pngCurve4(): descarga las 4 magnitudes (corriente, potencia, resistencia, eficiencia) de la carga y el voltaje actuales; al terminar vuelve a la magnitud que había.
+function pngCurve4(){const m0=cm,all=['i','p','r','eta'].map(m=>{setMetric(m);return cvImg()});setMetric(m0);all.forEach((r,k)=>setTimeout(()=>pngSave(r.o,r.name),k*350))}
+// pngLive(): descarga el gráfico de potencia en tiempo real (pide haber iniciado el ensayo).
+function pngLive(){if(!live.data.labels.length)return alert('Pulsa «Iniciar ensayo» para generar datos de potencia.');pngSave(pngRender(live,'Potencia en tiempo real (W) · '+LD[$('load').value].n),'labenergy_potencia_tiempo_real.png')}
 // csv(): exporta los datos registrados (carga, V, I, P, R, lm, K, η, origen y semilla).
 // Formato pensado para Excel en español: separador ";", decimales con coma y BOM UTF-8 (para ver bien tildes, Ω y η).
 const fz=n=>String(n).replace('.',',');
@@ -171,6 +194,8 @@ function tests(){const R=[],T=(n,f)=>{let o;try{o=f()}catch(e){o=false}R.push(`<
  T('Misma semilla → mismos datos',()=>{const a=rng32(7),b=rng32(7);return meas('inc',12,a).p===meas('inc',12,b).p});
  T('K LED / K incandescente a 12 V ≥ 5',()=>meas('led',12,r0).K/meas('inc',12,r0).K>=5);
  T('η dentro de 0–100 % en todo el rango',()=>['inc','led','res','mot'].every(k=>[0,3,6,9,12,15].every(v=>{const e=meas(k,v,r0).eta;return e>=0&&e<=100})));
+ T('LED: bajo el umbral no hay eficacia (K = 0 y η = 0)',()=>{const m=meas('led',8,r0);return m.K===0&&m.eta===0});
+ T('Ruido: cada lectura difiere ≤ 1 % del modelo sin ruido',()=>{const r=rng32(3);return Array.from({length:300},()=>meas('inc',12,r).i/(LD.inc.I(12)*1000)).every(q=>Math.abs(q-1)<=.0100001)});
  console.log(R.map(x=>x.replace(/<[^>]+>/g,'')).join('\n'))}
 // ---------- 11. GRÁFICOS (Chart.js) ----------
 // tk: estilo común de los ejes · ax(): opciones comunes de los gráficos.
@@ -205,7 +230,7 @@ function delta(){const b=meas($('load').value,+$('volt').value,()=>.5);
 // Curva interactiva: la línea es la curva teórica de la carga (sin ruido) y el punto turquesa es la posición actual.
 const MT={i:['Corriente (mA)',x=>x.i,'mA'],p:['Potencia (W)',x=>x.p,'W'],r:['Resistencia (Ω)',x=>x.r,'Ω'],eta:['Eficiencia η (%)',x=>x.eta,'%']};
 let cm='i',ck='';
-const cv=new Chart($('cv'),{type:'line',data:{datasets:[{data:[],borderColor:'#6d3fc0',backgroundColor:'rgba(109,63,192,.10)',fill:true,pointRadius:0,tension:.25},{data:[],showLine:false,pointRadius:9,pointHoverRadius:9,backgroundColor:'#0e9aa7',borderColor:'#ffffff',borderWidth:3}]},options:lin('Voltaje (V)','')});
+const cv=new Chart($('cv'),{type:'line',data:{datasets:[{data:[],borderColor:'#6d3fc0',backgroundColor:'rgba(109,63,192,.10)',fill:true,pointRadius:0,tension:0},{data:[],showLine:false,pointRadius:9,pointHoverRadius:9,backgroundColor:'#0e9aa7',borderColor:'#ffffff',borderWidth:3}]},options:lin('Voltaje (V)','')});
 cv.options.scales.x.min=0;cv.options.scales.x.max=15;
 // setMetric(x): cambia la magnitud mostrada (i, p, r, eta) y marca el botón activo.
 function setMetric(x){cm=x;document.querySelectorAll('#mbtn button').forEach(b=>b.classList.toggle('pr',b.dataset.m===x));ck='';updCurve()}
@@ -293,6 +318,24 @@ function extRender(){const f=extCalc();
  $('exEff').innerHTML=extEff(f);$('exRange').innerHTML=extRange(f);$('exSafe').innerHTML=extSafe(f);
  const l=f[f.length-1],h=+$('exH').value||0,t=+$('exT').value||0;
  $('exCost').innerHTML=l?(k=>`Con el último punto (${l.v} V, ${l.i.toFixed(1)} mA → ${l.p.toFixed(3)} W) usado ${h} h/día: <b>${k.toFixed(2)} kWh/mes</b> · <b>$${Math.round(k*t).toLocaleString('es-CL')}</b>/mes · <b>${(k*EF).toFixed(2)} kg CO₂</b>/mes.`)(l.p/1000*h*30):''}
+// ---------- 11c. TEMA CLARO / OSCURO ----------
+// Sin elección guardada se sigue al dispositivo (prefers-color-scheme); el botón del menú manda sobre el sistema y se recuerda en el navegador (localStorage).
+// applyChartTheme(dark): recolorea ejes, rejillas, leyendas y líneas de todos los gráficos; para exportar PNG se vuelve temporalmente al tema claro.
+const mq=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
+const isDark=()=>{const a=document.documentElement.getAttribute('data-theme');return a?a==='dark':!!(mq&&mq.matches)};
+function applyChartTheme(dark){const c=dark?{tx:'#b4bbdf',tk:'#8c94c0',gr:'#2a3059',pu:'#b49cff',fl:'rgba(180,156,255,.14)',cy:'#3fd0dc'}:{tx:'#4d567a',tk:'#7b82a6',gr:'#e6e1f5',pu:'#6d3fc0',fl:'rgba(109,63,192,.10)',cy:'#0e9aa7'};
+ Chart.defaults.color=c.tx;COL.inc=dark?'#f59e0b':'#d97706';COL.led=c.cy;COL.res=dark?'#9aa3cc':'#7b82a6';COL.mot=dark?'#ef6f5f':'#c0392b';
+ Object.values(Chart.instances).forEach(ch=>{const o=ch.options;Object.values(o.scales||{}).forEach(s=>{s.ticks=s.ticks||{};s.grid=s.grid||{};s.ticks.color=c.tk;s.grid.color=c.gr;if(s.title)s.title.color=c.tk});
+  const lg=o.plugins&&o.plugins.legend;if(lg&&lg.labels)lg.labels.color=c.tx});
+ [live,cv].forEach(ch=>{const d=ch.data.datasets[0];d.borderColor=c.pu;d.backgroundColor=c.fl});cv.data.datasets[1].backgroundColor=c.cy;
+ cxIV.data.datasets[0].borderColor=cxIV.data.datasets[0].backgroundColor=c.cy;cxP.data.datasets[0].borderColor=cxP.data.datasets[0].backgroundColor=c.pu;
+ render();Object.values(Chart.instances).forEach(ch=>ch.update('none'))}
+// setTheme('dark' | 'light' | null): aplica y recuerda el tema (null = seguir al sistema); actualiza el texto del botón y los gráficos.
+function setTheme(m){const r=document.documentElement;if(m)r.setAttribute('data-theme',m);try{if(m)localStorage.setItem('labenergy_theme',m)}catch(e){}
+ const d=isDark(),b=$('thBtn');if(b)b.textContent=d?'☀️ Modo claro':'🌙 Modo oscuro';applyChartTheme(d)}
+{const b=document.createElement('button');b.id='thBtn';b.className='th';b.title='Cambiar entre tema claro y oscuro';b.onclick=()=>setTheme(isDark()?'light':'dark');$('nav').append(b)}
+if(mq&&mq.addEventListener)mq.addEventListener('change',()=>{if(!document.documentElement.getAttribute('data-theme'))setTheme(null)});
 // ---------- 12. INICIO ----------
 // Al cargar la página: inicia el ruido con la semilla, muestra la primera lectura y dibuja tablas y sesiones.
 setSeed();refresh();render();susR();extRender();
+setTheme(null);projRender();
