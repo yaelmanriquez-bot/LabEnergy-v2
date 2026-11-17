@@ -1,8 +1,8 @@
 /* ===== LabEnergy — style.css ===== */
 /* Variables de color: turquesa (--cy) y morado (--am) como colores principales; paneles blancos con tintes suaves */
-:root{--bg:#f1f7fa;--p:#ffffff;--p2:#f4f1fc;--l:#d9d4ee;--t:#1e2347;--d:#4d567a;--f:#7b82a6;--am:#6d3fc0;--cy:#0e9aa7;--rd:#d13438;--gn:#1c8c63}
+:root{color-scheme:light;--bgg:linear-gradient(160deg,#dff6f6 0%,#f4f0fc 55%,#e7defa 100%);--inp:#fbfaff;--th:#f6f3fd;--l2:#e6e1f5;--kg:linear-gradient(135deg,#eafafa,#f3effd);--bxg:linear-gradient(90deg,#e8f9f9,#f3effd);--trk:#ece8f8;--rng:#e8e3f6;--sh:rgba(80,60,150,.07);--svgtxt:#51636f;--bg:#f1f7fa;--p:#ffffff;--p2:#f4f1fc;--l:#d9d4ee;--t:#1e2347;--d:#4d567a;--f:#7b82a6;--am:#6d3fc0;--cy:#0e9aa7;--rd:#d13438;--gn:#1c8c63}
 /* Base: reinicio de márgenes, tipografía y fondo degradado turquesa → lila */
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#dff6f6 0%,#f4f0fc 55%,#e7defa 100%) fixed;color:var(--t);font-family:'Exo 2',sans-serif;padding:24px 16px 60px;font-size:15px;line-height:1.55}
+*{box-sizing:border-box}body{margin:0;background:var(--bgg) fixed;color:var(--t);font-family:'Exo 2',sans-serif;padding:24px 16px 60px;font-size:15px;line-height:1.55}
 /* Contenedor central (.w) y tipografía monoespaciada para números (.m) */
 .w{max-width:1100px;margin:0 auto}.m{font-family:'Space Mono',monospace}
 /* Encabezado: banner con degradado turquesa-morado; título a la izquierda y marca Lab ENERGY a la derecha */
@@ -15,36 +15,36 @@ h1{font:700 19px 'Orbitron',sans-serif;letter-spacing:.03em;margin:0 0 4px}heade
 /* Menú de pestañas: botones tipo píldora; la activa lleva degradado */
 nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
 nav button{background:var(--p);border:1px solid var(--l);border-radius:999px;color:var(--d);padding:8px 15px;font:500 13px 'Exo 2';cursor:pointer}
-nav button:hover{border-color:var(--cy)}nav button.on{background:linear-gradient(120deg,var(--cy),var(--am));color:#fff;border-color:transparent}
+nav button:hover{border-color:var(--cy)}nav button.on{background:linear-gradient(120deg,#0e9aa7,#6d3fc0);color:#fff;border-color:transparent}
 /* Solo la pestaña activa se muestra */
 .tab{display:none}.tab.on{display:block}
 /* Cuadrículas: .g (panel lateral + gráfico) y .g2 (dos columnas); en pantallas angostas pasan a una columna */
 .g{display:grid;grid-template-columns:310px 1fr;gap:16px;margin-bottom:16px}.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 @media(max-width:760px){.g,.g2{grid-template-columns:1fr}}
 /* Tarjetas (paneles) con borde superior de color, títulos y etiquetas */
-.c{background:var(--p);border:1px solid var(--l);border-top:3px solid var(--cy);border-radius:12px;padding:16px 18px;margin-bottom:16px;box-shadow:0 2px 10px rgba(80,60,150,.07)}.g .c,.g2 .c{margin:0}.g2 .c:nth-child(even){border-top-color:var(--am)}
+.c{background:var(--p);border:1px solid var(--l);border-top:3px solid var(--cy);border-radius:12px;padding:16px 18px;margin-bottom:16px;box-shadow:0 2px 10px var(--sh)}.g .c,.g2 .c{margin:0}.g2 .c:nth-child(even){border-top-color:var(--am)}
 h2{font:600 12px 'Orbitron',sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--am);margin:0 0 12px}
 h3{font:600 14px 'Orbitron',sans-serif;margin:16px 0 6px;color:var(--t)}
 label{display:block;font-size:12px;color:var(--d);margin:10px 0 5px}
 /* Campos de formulario */
-select,input,textarea{width:100%;background:#fbfaff;border:1px solid var(--l);color:var(--t);border-radius:6px;padding:8px 10px;font:12px 'Space Mono',monospace}
+select,input,textarea{width:100%;background:var(--inp);border:1px solid var(--l);color:var(--t);border-radius:6px;padding:8px 10px;font:12px 'Space Mono',monospace}
 select:focus,input:focus,textarea:focus{outline:2px solid rgba(14,154,167,.45);border-color:var(--cy)}
 textarea{font-family:'Exo 2';min-height:64px}input[type=range]{padding:0;accent-color:var(--am)}
 /* Botones (.pr = botón principal con degradado) */
 button.b{font:500 13px 'Exo 2';border-radius:8px;border:1px solid var(--l);background:var(--p2);color:var(--t);padding:9px 14px;cursor:pointer}
-button.b:hover{border-color:var(--cy)}button.pr{background:linear-gradient(120deg,var(--cy),var(--am));color:#fff;border-color:transparent;font-weight:600}button.pr:hover{filter:brightness(1.08)}
+button.b:hover{border-color:var(--cy)}button.pr{background:linear-gradient(120deg,#0e9aa7,#6d3fc0);color:#fff;border-color:transparent;font-weight:600}button.pr:hover{filter:brightness(1.08)}
 /* Filas de botones e indicadores (.kp = rejilla de lecturas, .k = cada lectura, .hi = lectura destacada) */
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.row>*{flex:1}
 .kp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
-.k{background:linear-gradient(135deg,#eafafa,#f3effd);border:1px solid var(--l);border-radius:10px;padding:9px 11px}.k small{display:block;color:var(--f);font-size:11px;text-transform:uppercase}.k b{font:700 16px 'Space Mono'}
-.k.hi{background:linear-gradient(135deg,var(--cy),var(--am));border:0}.k.hi small{color:rgba(255,255,255,.85)}.k.hi b{color:#fff}
+.k{background:var(--kg);border:1px solid var(--l);border-radius:10px;padding:9px 11px}.k small{display:block;color:var(--f);font-size:11px;text-transform:uppercase}.k b{font:700 16px 'Space Mono'}
+.k.hi{background:linear-gradient(135deg,#0e9aa7,#6d3fc0);border:0}.k.hi small{color:rgba(255,255,255,.85)}.k.hi b{color:#fff}
 /* Tablas, colores de estado (.ok / .bad / .am) y notas */
-table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{text-align:left;padding:7px 8px;border-bottom:1px solid #e6e1f5}
-th{color:var(--am);background:#f6f3fd;font-size:11px;text-transform:uppercase;font-weight:600}td.n,th.n{text-align:right;font-family:'Space Mono'}
+table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--l2)}
+th{color:var(--am);background:var(--th);font-size:11px;text-transform:uppercase;font-weight:600}td.n,th.n{text-align:right;font-family:'Space Mono'}
 .ov{overflow-x:auto}.ok{color:var(--gn)}.bad{color:var(--rd)}.am{color:var(--am)}.dim{color:var(--d)}
 .note{font-size:12px;color:var(--f);margin-top:10px}
 /* Cuadro destacado (.box), diagrama de arquitectura (.arch) y cuestionario SUS (.sus) */
-.box{border-left:4px solid var(--cy);background:linear-gradient(90deg,#e8f9f9,#f3effd);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0}
+.box{border-left:4px solid var(--cy);background:var(--bxg);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0}
 .arch{display:flex;gap:6px;align-items:stretch;flex-wrap:wrap;margin:10px 0}.arch div{flex:1;min-width:120px;background:var(--p2);border:1px solid var(--l);border-radius:8px;padding:10px;font-size:12px}.arch b{display:block;color:var(--cy)}
 .sus label{color:var(--t);font-size:13px;margin:12px 0 4px}.sus .o{display:flex;gap:6px}.sus .o label{margin:0;flex:1;text-align:center;font-size:12px;color:var(--d)}
 .sus .o input{width:auto}ul{padding-left:18px;margin:6px 0}
@@ -53,7 +53,7 @@ th{color:var(--am);background:#f6f3fd;font-size:11px;text-transform:uppercase;fo
 /* Subtítulos de nivel 3 dentro de la pestaña Teoría (h4) */
 h4{font:600 12.5px 'Orbitron',sans-serif;margin:18px 0 6px;color:var(--cy)}
 /* Código de ejemplo (pestaña Circuito externo) */
-pre{background:#fbfaff;border:1px solid var(--l);border-radius:6px;padding:10px;overflow-x:auto;font:12px 'Space Mono',monospace}
+pre{background:var(--inp);border:1px solid var(--l);border-radius:6px;padding:10px;overflow-x:auto;font:12px 'Space Mono',monospace}
 /* Tarjeta destacada de EFICIENCIA (.eff): conclusión principal de resultados */
 .eff{background:linear-gradient(135deg,#0e9aa7,#6d3fc0);color:#fff;border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 6px 18px rgba(109,63,192,.25)}
 .eff h2{color:#d6fffb}.eff b{color:#fff}.eff p{margin:8px 0 0;line-height:1.6}
@@ -61,12 +61,12 @@ pre{background:#fbfaff;border:1px solid var(--l);border-radius:6px;padding:10px;
 .eff .kk{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}
 .eff .kk div{background:rgba(255,255,255,.17);border-radius:10px;padding:10px 12px}.eff small{display:block;opacity:.9;font-size:11px;text-transform:uppercase}
 /* Barras de ranking de eficiencia (.bar) y barra de rango de voltaje (.rng) */
-.bar{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:13px}.bar span{width:150px;flex:none}.bar i{display:block;height:16px;border-radius:8px;background:linear-gradient(90deg,var(--cy),var(--am));min-width:3px}.bar em{font:11px 'Space Mono',monospace;font-style:normal;color:var(--d);width:58px;text-align:right}
-.rng{position:relative;height:12px;border-radius:6px;background:#e8e3f6;margin:12px 0 2px}.rng i{position:absolute;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,var(--cy),var(--am))}
+.bar{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:13px}.bar span{width:150px;flex:none}.bar i{display:block;height:16px;border-radius:8px;background:linear-gradient(90deg,#0e9aa7,#6d3fc0);min-width:3px}.bar em{font:11px 'Space Mono',monospace;font-style:normal;color:var(--d);width:58px;text-align:right}
+.rng{position:relative;height:12px;border-radius:6px;background:var(--rng);margin:12px 0 2px}.rng i{position:absolute;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,#0e9aa7,#6d3fc0)}
 /* Flechas ▲▼ de cambio en los indicadores */
 .dl{font-style:normal;font-size:12px;margin-left:6px}.dl.up{color:var(--gn)}.dl.dn{color:var(--rd)}.k.hi .dl{color:#fff}
 /* Barra de reparto de energía: parte útil (turquesa) frente a calor (naranja-rojo); el ancho cambia con animación */
-.split{display:flex;height:34px;border-radius:10px;overflow:hidden;font:600 12px 'Exo 2';color:#fff;background:#ece8f8}
+.split{display:flex;height:34px;border-radius:10px;overflow:hidden;font:600 12px 'Exo 2';color:#fff;background:var(--trk)}
 .split div{display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;transition:width .35s}
 #spU{background:linear-gradient(90deg,#0e9aa7,#2bc4b6)}#spH{background:linear-gradient(90deg,#f59e0b,#ef4444)}
 /* Rotor del motor (gira solo cuando hay corriente) */
@@ -74,9 +74,33 @@ pre{background:#fbfaff;border:1px solid var(--l);border-radius:6px;padding:10px;
 /* Tres tarjetas de fórmulas en la pestaña Teoría */
 .g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}.k p{margin:6px 0 0;font-size:12.5px;color:var(--d)}.k.hi p{color:rgba(255,255,255,.92)}
 /* Ilustraciones de las cargas: solo se ve la activa; .glow = brillo o calor controlado por --g (0 a 1) desde script.js */
-.illbox{background:linear-gradient(135deg,#eafafa,#f3effd);border:1px solid var(--l);border-radius:12px;padding:8px;margin:10px 0;text-align:center}
+.illbox{background:var(--kg);border:1px solid var(--l);border-radius:12px;padding:8px;margin:10px 0;text-align:center}
 .ill{display:none;width:100%;max-width:230px;height:auto;margin:auto}.ill.on{display:block}
 .glow{opacity:var(--g,0);transition:opacity .25s}
 .fan{animation:spin 1s linear infinite;transform-origin:172px 60px}
 /* Íconos pequeños en la tabla de Teoría (sin brillo ni giro) */
 .ico{width:56px;height:34px;vertical-align:middle;margin-right:8px}.ico .fan{animation:none}
+
+/* ===== TEMA OSCURO =====
+   Se activa de dos formas: (1) automáticamente si el dispositivo está en modo oscuro (prefers-color-scheme),
+   (2) con el botón «Modo oscuro / claro» del menú (se recuerda en el navegador). El botón manda sobre el sistema. */
+::placeholder{color:var(--f);opacity:.8}
+nav button.th{margin-left:auto}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;--bgg:linear-gradient(160deg,#0b0e20 0%,#12152f 55%,#1a1540 100%);--bg:#0f1226;--p:#171b36;--p2:#20254a;--l:#2e3461;--t:#e8eaff;--d:#b4bbdf;--f:#8c94c0;--am:#b49cff;--cy:#3fd0dc;--rd:#ff7276;--gn:#4fdca0;--inp:#11142b;--th:#1d2147;--l2:#2a3059;--kg:linear-gradient(135deg,#16303f,#241f4d);--bxg:linear-gradient(90deg,#15323d,#241f4d);--trk:#262b55;--rng:#2a3059;--sh:rgba(0,0,0,.4);--svgtxt:#b4bbdf}
+:root:not([data-theme=light]) #circ circle[fill="#fff"]{fill:var(--p)}
+:root:not([data-theme=light]) #circ text[fill="#51636f"]{fill:var(--svgtxt)}
+:root:not([data-theme=light]) #circ text[fill="#1b2a35"],:root:not([data-theme=light]) #circ text[fill="#222"]{fill:var(--t)}
+:root:not([data-theme=light]) #circ path[stroke="#7a8b97"]{stroke:#6f7aa6}
+:root:not([data-theme=light]) #circ [stroke="#5b32b0"]{stroke:#b49cff}
+:root:not([data-theme=light]) #circ text[fill="#5b32b0"],:root:not([data-theme=light]) #circ circle[fill="#5b32b0"]{fill:#b49cff}
+:root:not([data-theme=light]) .ill text[fill="#333"]{fill:var(--t)}
+:root:not([data-theme=light]) .ill text[fill="#7b82a6"]{fill:var(--f)}}
+:root[data-theme=dark]{color-scheme:dark;--bgg:linear-gradient(160deg,#0b0e20 0%,#12152f 55%,#1a1540 100%);--bg:#0f1226;--p:#171b36;--p2:#20254a;--l:#2e3461;--t:#e8eaff;--d:#b4bbdf;--f:#8c94c0;--am:#b49cff;--cy:#3fd0dc;--rd:#ff7276;--gn:#4fdca0;--inp:#11142b;--th:#1d2147;--l2:#2a3059;--kg:linear-gradient(135deg,#16303f,#241f4d);--bxg:linear-gradient(90deg,#15323d,#241f4d);--trk:#262b55;--rng:#2a3059;--sh:rgba(0,0,0,.4);--svgtxt:#b4bbdf}
+:root[data-theme=dark] #circ circle[fill="#fff"]{fill:var(--p)}
+:root[data-theme=dark] #circ text[fill="#51636f"]{fill:var(--svgtxt)}
+:root[data-theme=dark] #circ text[fill="#1b2a35"],:root[data-theme=dark] #circ text[fill="#222"]{fill:var(--t)}
+:root[data-theme=dark] #circ path[stroke="#7a8b97"]{stroke:#6f7aa6}
+:root[data-theme=dark] #circ [stroke="#5b32b0"]{stroke:#b49cff}
+:root[data-theme=dark] #circ text[fill="#5b32b0"],:root[data-theme=dark] #circ circle[fill="#5b32b0"]{fill:#b49cff}
+:root[data-theme=dark] .ill text[fill="#333"]{fill:var(--t)}
+:root[data-theme=dark] .ill text[fill="#7b82a6"]{fill:var(--f)}
