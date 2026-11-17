@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Declara que la página tiene tema claro y oscuro propios (evita que el celular oscurezca los colores por su cuenta) -->
+<meta name="color-scheme" content="light dark">
+<script>try{var _t=localStorage.getItem("labenergy_theme");if(_t==="dark"||_t==="light")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>
 <title>Lab ENERGY — Laboratorio digital energético al alcance de todos</title>
 <!-- Conexión a Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -106,8 +109,10 @@
 <div class="row" id="mbtn" style="margin-top:0"><button class="b pr" data-m="i" onclick="setMetric('i')">Corriente</button><button class="b" data-m="p" onclick="setMetric('p')">Potencia</button><button class="b" data-m="r" onclick="setMetric('r')">Resistencia</button><button class="b" data-m="eta" onclick="setMetric('eta')">Eficiencia</button></div>
 <div style="height:230px;margin-top:10px"><canvas id="cv"></canvas></div>
 <div id="cvTxt" class="note" style="font-size:13px"></div>
+<div class="row"><button class="b" onclick="pngCurve()">🖼️ Descargar esta curva (PNG)</button><button class="b" onclick="pngCurve4()">🖼️ Descargar las 4 variables (PNG)</button></div>
 <h2 style="margin-top:16px">Potencia en tiempo real (W)</h2><div style="height:120px"><canvas id="live"></canvas></div>
-<p class="note">Pulsa «Iniciar ensayo» para ver la potencia medida cada 0,5 s (con ruido). «Barrido automático» registra 4 cargas × 5 tensiones (6–14 V) con la misma semilla.</p></div>
+<div class="row"><button class="b" onclick="pngLive()">🖼️ Descargar PNG</button><button class="b" onclick="histCsv()">📥 Serie temporal (CSV)</button></div>
+<p class="note">Pulsa «Iniciar ensayo» para ver la potencia medida cada 0,5 s (con ruido). «Barrido automático» registra 4 cargas × 6 tensiones (6, 8, 9, 10, 12 y 14 V) con la misma semilla; el punto de 9 V muestra el umbral del LED.</p></div>
 </div>
 </div>
 </section>
@@ -175,7 +180,7 @@ void loop(){
 <tr><td>Dependiente</td><td>I, P = V·I, R = V/I, flujo (lm), eficacia K (lm/W), η (%)</td><td>Calculadas por el motor de datos</td></tr>
 <tr><td>Controladas</td><td>Fuente DC ideal, temperatura ambiente, ruido ±1 % con semilla fija</td><td>Constantes del modelo</td></tr></table></div>
 <h3>Medida de eficiencia</h3>
-<p>Lámparas: <span class="m">η = K / 250 lm/W</span> (250 lm/W ≈ luz blanca ideal, supuesto del modelo). Motor: <span class="m">η = P_mecánica / P_eléctrica</span>. Calor disipado: <span class="m">P·(1 − η)</span>. Para lámparas, el valor de K (lm/W) es el indicador comparativo principal.</p>
+<p>Lámparas: <span class="m">η = K / 250 lm/W</span> (250 lm/W ≈ luz blanca ideal, supuesto del modelo). Motor: <span class="m">η = P_mecánica / P_eléctrica</span> (en el simulador se asume ≈ 62 % a 12 V). Resistencia: no tiene salida útil, así que η = 0 por convención. Calor disipado: <span class="m">P·(1 − η)</span>. Para lámparas, el valor de K (lm/W) es el indicador comparativo principal. La definición completa de η y del error está en la pestaña Teoría.</p>
 <h3>Modelos (resumen)</h3><ul>
 <li>Incandescente: R(V) = 14,5·(V/12)^0,2 Ω — la resistencia <b>aumenta</b> con la temperatura del filamento; K = 11·(V/12)^1,2 lm/W.</li>
 <li>LED: conduce sobre ~9 V, I = 0,055·(V−9) A; K ≈ 100 lm/W, decrece levemente con sobrepotencia.</li>
@@ -193,6 +198,13 @@ void loop(){
 <div class="k"><small>Ley de Ohm</small><b class="m">I = V / R</b><p>Más voltaje → más corriente. Más resistencia → menos corriente.</p></div>
 <div class="k"><small>Potencia</small><b class="m">P = V · I</b><p>Los watts que consume la carga cada segundo.</p></div>
 <div class="k hi"><small>Eficiencia</small><b class="m">η = útil / total</b><p>Un LED ≈ 40 %. Una incandescente ≈ 4 %.</p></div></div>
+<h3>Cómo se define η y el error en LabEnergy</h3>
+<div class="box"><b>Eficiencia:</b> <span class="m">η = P_útil / P_eléctrica × 100</span>, con <span class="m">P_eléctrica = V·I</span>.
+<ul><li><b>Lámparas:</b> P_útil = lm / 250 (potencia luminosa equivalente, tomando 250 lm/W como luz blanca ideal). Por eso <span class="m">η = K / 250 × 100</span>.</li>
+<li><b>Motor DC:</b> P_útil = potencia mecánica. En el simulador es un <b>supuesto del modelo</b> (≈ 62 % a 12 V, 1 punto menos por cada volt de diferencia), no una medición.</li>
+<li><b>Resistencia 10 Ω:</b> no entrega luz ni trabajo, así que η = 0 por convención. Si se usara como calefactor, su eficiencia sería ≈ 100 %.</li>
+<li><b>Sin conducción</b> (LED bajo 9 V o circuito abierto): P = 0, así que η = 0 y K = 0.</li></ul>
+<b>Error porcentual:</b> <span class="m">e (%) = |valor simulado − valor de referencia| / valor de referencia × 100</span>. El ruido de ±1 % hace que cada lectura difiera hasta 1 % del modelo sin ruido; eso <b>no</b> es una validación externa, que requiere una referencia independiente (cálculo aparte o medición en Tinkercad).</div>
 <h3>Las 5 cargas de un vistazo</h3>
 <div class="ov"><table><tr><th>Carga</th><th>¿Qué hace con la energía?</th><th>Dato clave a 12 V</th></tr>
 <tr><td><svg class="ico" data-k="inc" viewBox="0 0 200 120"></svg><b>Incandescente</b></td><td>Calienta un filamento hasta que brilla</td><td>η ≈ 4 %: casi todo es calor</td></tr>
@@ -224,6 +236,26 @@ void loop(){
 <div class="c"><h2>Verificación de la hipótesis H1 (a 12 V)</h2><div id="h1" class="dim">Registre datos para evaluar.</div>
 <h3>Cuestionario</h3><label>1. El filamento incandescente aumenta su resistencia al calentarse. Con sus datos, ¿qué ocurre con R al subir de 6 V a 14 V y por qué?</label><textarea></textarea>
 <label>2. Para un mismo flujo luminoso, ¿qué fracción de la potencia ahorra el LED? Fundamente con K.</label><textarea></textarea></div></section>
+
+<!-- 4. PROYECCIÓN RESIDENCIAL: lleva la eficacia K medida a 12 V a un caso doméstico (energía, CLP y CO₂); la escribe projRender() en script.js -->
+<section class="tab" id="t-proj"><div class="c"><h2>Proyección residencial: del laboratorio de 12 V a una vivienda</h2>
+<div class="box">🏠 <b>¿Cuánta energía, dinero y CO₂ se ahorra al cambiar lámparas incandescentes por módulos LED que den la misma luz?</b> Se usa la eficacia K a 12 V de la pestaña Resultados (tus datos registrados o, si no hay, el modelo).</div>
+<div class="g2" style="margin-top:12px"><div><label>Número de lámparas</label><input type="number" id="pjN" value="4" min="1" step="1" oninput="projRender()"></div>
+<div><label>Luz necesaria por lámpara (lm)</label><input type="number" id="pjLm" value="800" min="1" step="50" oninput="projRender()"></div>
+<div><label>Horas de uso al día</label><input type="number" id="pjH" value="5" min="0" step="0.5" oninput="projRender()"></div>
+<div><label>Tarifa eléctrica (CLP/kWh)</label><input type="number" id="pjT" value="200" min="0" step="10" oninput="projRender()"></div>
+<div><label>Precio de un módulo LED (CLP, valor supuesto editable)</label><input type="number" id="pjP" value="3500" min="0" step="500" oninput="projRender()"></div></div></div>
+<div class="eff" id="pjOut" style="margin-top:16px"></div>
+<div class="c"><h2>Resultado anual por tecnología</h2><div class="ov"><table><thead><tr><th>Tecnología</th><th class="n">K (lm/W)</th><th class="n">Potencia total (W)</th><th class="n">Energía (kWh/año)</th><th class="n">Costo (CLP/año)</th><th class="n">CO₂ (kg/año)</th></tr></thead><tbody id="pjTb"></tbody></table></div>
+<p class="note">CO₂ = kWh × 0,4 kg/kWh (factor de la matriz eléctrica chilena usado en el proyecto). Es una proyección por eficacia luminosa: se supone que las dos tecnologías simuladas representan a las lámparas reales, cuyos valores de K varían según el modelo.</p></div>
+<div class="c"><h2>¿Qué cambió respecto del monitor residencial (Avance 1)?</h2><div class="ov"><table><thead><tr><th>Aspecto</th><th>Avance 1: hardware residencial</th><th>LabEnergy actual: simulador 12 V DC</th></tr></thead><tbody>
+<tr><td><b>Tensión</b></td><td>220 V AC de la red domiciliaria</td><td>0–15 V DC simulados</td></tr>
+<tr><td><b>Medición</b></td><td>Pinza amperimétrica sobre cargas domésticas</td><td>Motor de cálculo en JavaScript; circuito externo en Tinkercad como contraste opcional</td></tr>
+<tr><td><b>Riesgo eléctrico</b></td><td>Contacto con la red (alto)</td><td>Ninguno</td></tr>
+<tr><td><b>Acceso</b></td><td>Requiere equipo físico e instalación</td><td>Navegador, sin instalar nada</td></tr>
+<tr><td class="ok"><b>Se gana</b></td><td>—</td><td>Seguridad, reproducibilidad (semilla fija) y uso autónomo del estudiante</td></tr>
+<tr><td class="bad"><b>Se pierde</b></td><td>—</td><td>Medición física real de consumo doméstico y factor de potencia en AC: aquí los datos vienen de un modelo, no de aparatos reales</td></tr>
+<tr><td><b>Cómo se conectan</b></td><td colspan="2">Esta pestaña traduce la eficacia K medida a 12 V en consumo, costo y CO₂ de una vivienda.</td></tr></tbody></table></div></div></section>
 
 <!-- VALIDACIÓN DE USABILIDAD: cuestionario SUS; las respuestas se envían a una hoja de Google (ver SURVEY_URL en script.js) -->
 <section class="tab" id="t-val"><div class="c"><h2>Tu opinión importa: validación de usabilidad</h2>
