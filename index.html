@@ -216,10 +216,10 @@ void loop(){
 <div class="c"><h2>Datos registrados</h2>
 <!-- Tabla de datos registrados (se llena desde script.js) -->
 <div class="ov"><table><thead><tr><th>Carga</th><th class="n">V</th><th class="n">I (mA)</th><th class="n">P (W)</th><th class="n">R (Ω)</th><th class="n">lm</th><th class="n">K (lm/W)</th><th class="n">η (%)</th></tr></thead><tbody id="tb"></tbody></table></div>
-<div class="row"><button class="b" onclick="csv()">📥 Descargar CSV</button></div></div>
+<div class="row"><button class="b" onclick="csv()">📥 Descargar CSV</button><button class="b" onclick="pngAll()">🖼️ Descargar gráficos (PNG)</button></div></div>
 <!-- Gráficos de curva I–V y de eficiencia vs voltaje -->
-<div class="g2"><div class="c"><h2>Curva I–V</h2><div style="height:250px"><canvas id="cIV"></canvas></div></div>
-<div class="c"><h2>Eficiencia η (%) vs tensión</h2><div style="height:250px"><canvas id="cEta"></canvas></div></div></div>
+<div class="g2"><div class="c"><h2>Curva I–V</h2><div style="height:250px"><canvas id="cIV"></canvas></div><div class="row"><button class="b" onclick="pngChart(civ,'labenergy_curva_IV.png','Curva I–V · LabEnergy')">🖼️ Descargar PNG</button></div></div>
+<div class="c"><h2>Eficiencia η (%) vs tensión</h2><div style="height:250px"><canvas id="cEta"></canvas></div><div class="row"><button class="b" onclick="pngChart(ceta,'labenergy_eficiencia_vs_tension.png','Eficiencia η (%) vs tensión · LabEnergy')">🖼️ Descargar PNG</button></div></div></div>
 <!-- Verificación de la hipótesis H1 y cuestionario -->
 <div class="c"><h2>Verificación de la hipótesis H1 (a 12 V)</h2><div id="h1" class="dim">Registre datos para evaluar.</div>
 <h3>Cuestionario</h3><label>1. El filamento incandescente aumenta su resistencia al calentarse. Con sus datos, ¿qué ocurre con R al subir de 6 V a 14 V y por qué?</label><textarea></textarea>
