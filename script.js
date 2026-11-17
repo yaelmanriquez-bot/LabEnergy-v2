@@ -113,6 +113,17 @@ $('load').innerHTML=['inc','led','res','mot','off'].map(k=>`<option value=${k}>$
 // dl(): descarga un archivo CSV (usa la capacidad de descargas si la página está publicada como artifact; si no, descarga directa).
 async function dl(name,txt){try{const d=window.claude&&await claude.use('downloads');if(d){await d.save({filename:name,data:txt});return}}catch(e){if(e&&e.code==='declined')return}
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv'}));a.download=name;a.click()}
+// pngChart(): descarga un gráfico (Chart.js) como imagen PNG con fondo blanco, título y marca.
+// Usa un lienzo auxiliar para que la imagen no salga con fondo transparente.
+function pngChart(chart,name,title){if(!rec.length)return alert('Aún no hay datos registrados.');
+ const src=chart.canvas,w=src.width,h=src.height,s=Math.max(1,w/src.clientWidth),pad=Math.round(14*s),th=Math.round(34*s);
+ const o=document.createElement('canvas');o.width=w+pad*2;o.height=h+pad*2+th;
+ const x=o.getContext('2d');x.fillStyle='#ffffff';x.fillRect(0,0,o.width,o.height);
+ x.fillStyle='#1e2347';x.font='700 '+Math.round(15*s)+'px Orbitron, sans-serif';x.textBaseline='middle';x.fillText(title,pad,pad/2+th/2);
+ x.drawImage(src,pad,pad+th);
+ o.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)},'image/png')}
+// pngAll(): descarga los dos gráficos de Resultados (curva I–V y eficiencia vs tensión).
+function pngAll(){pngChart(civ,'labenergy_curva_IV.png','Curva I–V · LabEnergy');setTimeout(()=>pngChart(ceta,'labenergy_eficiencia_vs_tension.png','Eficiencia η (%) vs tensión · LabEnergy'),300)}
 // csv(): exporta los datos registrados (carga, V, I, P, R, lm, K, η, origen y semilla).
 // Formato pensado para Excel en español: separador ";", decimales con coma y BOM UTF-8 (para ver bien tildes, Ω y η).
 const fz=n=>String(n).replace('.',',');
